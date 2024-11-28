@@ -1,8 +1,6 @@
 import tkinter as tk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import matplotlib.dates as mdates
-
 import datetime
 import numpy as np
 
@@ -22,8 +20,30 @@ class GraphFrame(tk.Frame):
         self.ax.clear()
         data = self.data_manager.get_filtered_data()
 
+        # Month name mapping
+        month_name = {
+            '01': 'January', '02': 'February', '03': 'March', '04': 'April',
+            '05': 'May', '06': 'June', '07': 'July', '08': 'August',
+            '09': 'September', '10': 'October', '11': 'November', '12': 'December',
+            'ทั้งหมด': 'All'
+        }
+
+        # Check if current month is "ทั้งหมด"
+        if self.data_manager.current_month == "ทั้งหมด":
+            # Display message for monthly filter
+            self.ax.text(0.5, 0.5,
+                         "Graph supports monthly view only.\nPlease select a specific month.",
+                         horizontalalignment='center',
+                         verticalalignment='center',
+                         fontsize=12,
+                         color='gray',
+                         transform=self.ax.transAxes)
+            self.ax.set_title("Monthly View Required")
+            self.fig.canvas.draw()
+            return
+
         if not data:
-            self.ax.set_title("No data to display")
+            self.ax.set_title(f"No data for {month_name[self.data_manager.current_month]}")
             self.fig.canvas.draw()
             return
 
@@ -49,11 +69,6 @@ class GraphFrame(tk.Frame):
         self.ax.set_xlabel('Day')
         self.ax.set_ylabel('Amount (Baht)')
 
-        month_name = {
-            '01': 'January', '02': 'February', '03': 'March', '04': 'April', '05': 'May', '06': 'June',
-            '07': 'July', '08': 'August', '09': 'September', '10': 'October', '11': 'November', '12': 'December',
-            'ทั้งหมด': 'All'
-        }
         self.ax.set_title(f'Expenses for {month_name[self.data_manager.current_month]}')
         self.ax.set_xticks(all_dates)
         self.ax.legend()  # เพิ่ม legend
